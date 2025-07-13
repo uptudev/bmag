@@ -3,6 +3,10 @@
 --- MOD_ID: BetterMouseAndGamepad
 --- MOD_AUTHOR: [Kooluve]
 --- MOD_DESCRIPTION: [V1.0.5d] [for steammoded 0.9.8-] Make mouse and gamepad more efficient and easier to use. View '*.lua' file for all functions and settings. https://github.com/Kooluve/Better-Mouse-And-Gamepad
+--- PRIORITY: -10000
+--- PREFIX: bmag_k
+--- VERSION: 1.0.6d
+
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
