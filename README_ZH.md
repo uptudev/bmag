@@ -2,7 +2,10 @@
 
 [English](/README.md) | 简体中文 | [日本語](/README_JP.md)
 
-这是一个[小丑牌（Balatro）](https://store.steampowered.com/app/2379780/Balatro/)的实用mod。优化鼠标和手柄操作，更加简单高效，有效缓解手指压力。我感觉这可能是最实用的mod之一。
+这是一个[小丑牌（Balatro）](https://store.steampowered.com/app/2379780/Balatro/)的实用mod。
+优化鼠标和手柄操作，更加简单高效，有效缓解手指压力。我感觉这可能是最实用的mod之一。
+
+其实我更推荐使用另一个mod——[Handy](https://github.com/SleepyG11/HandyBalatro)，它于去年8月发布并持续维护至今，功能更丰富，包含很多快捷操作，能高度自定义按键绑定，几乎全方位优于我的mod。缺点（截止25.07.12）是没有中文、设置略繁琐、操作略有区别（主要是无法在一次右键长按过程中，持续进行选牌和取消的操作，即使选择了"Presets -> Pre-made presets -> Better Mouse and Gamepad"选项也不行。所以没我的mod丝滑）。
 
 ## 操作
 
@@ -30,7 +33,7 @@
 
 ## 安装
 可以简单参考mod框架的教程[Steamodded wiki](https://github.com/Steamodded/smods/wiki)
-详细中文教程可以参考我写的教程[小丑牌mod安装保姆级教程](https://www.bilibili.com/opus/906807917074710537)
+详细中文教程可以参考我写的教程[小丑牌mod安装保姆级教程](https://www.bilibili.com/opus/906807917074710537),大概是国内最全的教程。
 
 ### 支持的Steamodded框架版本
 | Steamodded版本   | mod版本 |
@@ -48,6 +51,15 @@ mod配置页主要分为三个部分：**功能**，**修改**和**手柄**。
 ## 已知问题
 
 用了太多代码重写，也许会与其他的修改键位mod冲突。
+
+## 发现更多mod
+
+ちなみに、以下の場所でより多くのMODを見つけることができます:
+[awesome-balatro](https://github.com/jie65535/awesome-balatro)
+[Balatro Mod Index](https://docs.google.com/spreadsheets/d/1aoJrrC7Y-dkvJwBu_U6amelYnoCrZgWqpoGRAfHN1ys)
+[discord--modding](https://discord.com/channels/1116389027176787968/1209506514763522108)
+[mod wiki](https://balatromods.miraheze.org/wiki/Main_Page)
+[nexus](https://www.nexusmods.com/games/balatro/mods)
 
 ## 贡献
 
