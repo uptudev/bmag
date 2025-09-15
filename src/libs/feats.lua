@@ -5,7 +5,9 @@ function multiselect_hold()
         STATE.multiselecting = false;
         STATE.prev_prev_target = G.CONTROLLER.hovering.prev_target;
         G.CONTROLLER.hovering.prev_target = G.CONTROLLER.hovering.target;
-        G.CONTROLLER.hovering.target:click();
+        if G.CONTROLLER.hovering.target:is(Card) then
+            G.CONTROLLER.hovering.target:click();
+        end
     elseif G.CONTROLLER.hovering.prev_target ~= G.CONTROLLER.hovering.target then
         if
             G.CONTROLLER.hovering.target:is(Card) and
@@ -14,7 +16,9 @@ function multiselect_hold()
         then
             G.CONTROLLER.hovering.prev_target:click();
         end
-        G.CONTROLLER.hovering.target:click();
+        if G.CONTROLLER.hovering.target:is(Card) then
+            G.CONTROLLER.hovering.target:click();
+        end
         STATE.prev_prev_target = G.CONTROLLER.hovering.prev_target;
     end
 end
