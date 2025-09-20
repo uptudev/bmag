@@ -11,20 +11,21 @@ function multiselect_hold()
             Vector_Dist(STATE.multiselect_down_pos, G.CONTROLLER.cursor_position) > 0.1 * G.MIN_CLICK_DIST
         then
             STATE.multiselecting = false;
-            STATE.prev_prev_target = G.CONTROLLER.hovering.prev_target;
-            G.CONTROLLER.hovering.prev_target = G.CONTROLLER.hovering.target;
             G.CONTROLLER.hovering.target:click();
+            STATE.prev_target = G.CONTROLLER.hovering.target;
         elseif
-            G.CONTROLLER.hovering.prev_target ~= G.CONTROLLER.hovering.target and
-            STATE.multiselecting == false
+            STATE.multiselecting == false and
+            STATE.prev_target ~= G.CONTROLLER.hovering.target
         then
             if
+                STATE.prev_prev_target ~= nil and
                 STATE.prev_prev_target == G.CONTROLLER.hovering.target
             then
-                G.CONTROLLER.hovering.prev_target:click();
+                STATE.prev_target:click();
             end
             G.CONTROLLER.hovering.target:click();
-            STATE.prev_prev_target = G.CONTROLLER.hovering.prev_target;
+            STATE.prev_prev_target = STATE.prev_target;
+            STATE.prev_target = G.CONTROLLER.hovering.target;
         end
     end
 end

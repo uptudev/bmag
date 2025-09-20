@@ -38,6 +38,7 @@ STATE = {
     listening = nil,
     cfg_gui_parent = nil,
     multiselecting = nil,
+    prev_target = nil,
     prev_prev_target = nil,
     multiselect_down_pos = nil,
 };
