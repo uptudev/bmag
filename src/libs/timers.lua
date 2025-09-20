@@ -31,6 +31,10 @@ function TimerTable:start(button)
         STATE.bind_map.binding_to_button['multiselect'].button == button
     then
         STATE.multiselecting = true;
+        STATE.multiselect_down_pos = {
+            x = G.CONTROLLER.cursor_position.x,
+            y = G.CONTROLLER.cursor_position.y,
+        };
     end
     self[button] = 0;
     return self;
@@ -47,6 +51,7 @@ function TimerTable:stop(button)
         STATE.bind_map.binding_to_button['multiselect'].button == button
     then
         STATE.multiselecting = nil;
+        STATE.multiselect_down_pos = nil;
     end
     -- binds to config if listening here
     if STATE.listening then

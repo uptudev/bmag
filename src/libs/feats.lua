@@ -1,36 +1,31 @@
 --- Update function for multiselect
 -- Only runs when `STATE.multiselecting` is not nil.
 function multiselect_hold()
-    if STATE.multiselecting == true then
-        STATE.multiselecting = false;
-        STATE.prev_prev_target = G.CONTROLLER.hovering.prev_target;
-        G.CONTROLLER.hovering.prev_target = G.CONTROLLER.hovering.target;
+    if
+        G.CONTROLLER.hovering.target ~= nil and
+        G.CONTROLLER.hovering.target:is(Card) and
+        G.CONTROLLER.hovering.target.area == G.hand
+    then
         if
-            G.CONTROLLER.hovering.target ~= nil and
-            G.CONTROLLER.hovering.target:is(Card) and not
-            G.CONTROLLER.hovering.target.area == G.hand
+            STATE.multiselecting == true and
+            Vector_Dist(STATE.multiselect_down_pos, G.CONTROLLER.cursor_position) > 0.1 * G.MIN_CLICK_DIST
         then
+            STATE.multiselecting = false;
+            STATE.prev_prev_target = G.CONTROLLER.hovering.prev_target;
+            G.CONTROLLER.hovering.prev_target = G.CONTROLLER.hovering.target;
             G.CONTROLLER.hovering.target:click();
-        end
-    elseif G.CONTROLLER.hovering.prev_target ~= G.CONTROLLER.hovering.target then
-        if
-            G.CONTROLLER.hovering.target ~= nil and
-            G.CONTROLLER.hovering.target:is(Card) and not
-            G.CONTROLLER.hovering.target.area == G.hand and
-            STATE.prev_prev_target == G.CONTROLLER.hovering.target and
-            G.CONTROLLER.hovering.prev_target:is(Card) and
-            G.CONTROLLER.hovering.prev_target.area == G.hand
+        elseif
+            G.CONTROLLER.hovering.prev_target ~= G.CONTROLLER.hovering.target and
+            STATE.multiselecting == false
         then
-            G.CONTROLLER.hovering.prev_target:click();
-        end
-        if
-            G.CONTROLLER.hovering.target ~= nil and
-            G.CONTROLLER.hovering.target:is(Card) and
-            G.CONTROLLER.hovering.target.area == G.hand
-        then
+            if
+                STATE.prev_prev_target == G.CONTROLLER.hovering.target
+            then
+                G.CONTROLLER.hovering.prev_target:click();
+            end
             G.CONTROLLER.hovering.target:click();
+            STATE.prev_prev_target = G.CONTROLLER.hovering.prev_target;
         end
-        STATE.prev_prev_target = G.CONTROLLER.hovering.prev_target;
     end
 end
 
