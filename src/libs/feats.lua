@@ -7,22 +7,26 @@ function multiselect_hold()
         G.CONTROLLER.hovering.prev_target = G.CONTROLLER.hovering.target;
         if
             G.CONTROLLER.hovering.target ~= nil and
-            G.CONTROLLER.hovering.target:is(Card)
+            G.CONTROLLER.hovering.target:is(Card) and not
+            G.CONTROLLER.hovering.target.area == G.hand
         then
             G.CONTROLLER.hovering.target:click();
         end
     elseif G.CONTROLLER.hovering.prev_target ~= G.CONTROLLER.hovering.target then
         if
             G.CONTROLLER.hovering.target ~= nil and
-            G.CONTROLLER.hovering.target:is(Card) and
+            G.CONTROLLER.hovering.target:is(Card) and not
+            G.CONTROLLER.hovering.target.area == G.hand and
             STATE.prev_prev_target == G.CONTROLLER.hovering.target and
-            G.CONTROLLER.hovering.prev_target:is(Card)
+            G.CONTROLLER.hovering.prev_target:is(Card) and
+            G.CONTROLLER.hovering.prev_target.area == G.hand
         then
             G.CONTROLLER.hovering.prev_target:click();
         end
-        if 
+        if
             G.CONTROLLER.hovering.target ~= nil and
-            G.CONTROLLER.hovering.target:is(Card)
+            G.CONTROLLER.hovering.target:is(Card) and
+            G.CONTROLLER.hovering.target.area == G.hand
         then
             G.CONTROLLER.hovering.target:click();
         end
