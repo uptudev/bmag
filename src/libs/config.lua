@@ -53,7 +53,7 @@ end
 -- @return the UI element to be rendered
 local function save_button()
     return {
-        n = G.UIT.R,
+        n = G.UIT.C,
         config = {
             align = 'cm',
             h = 0.25,
@@ -83,7 +83,47 @@ local function save_button()
                         },
                     },
                 },
-            }, 
+            },
+        },
+    };
+end
+
+--- Generates a UI element for resetting the current keybind schema to default
+--
+-- @return the UI element to be rendered
+local function reset_button()
+    return {
+        n = G.UIT.C,
+        config = {
+            align = 'cm',
+            h = 0.25,
+            w = 8,
+            colour = G.C.BLACK,
+        },
+        nodes = {
+            {
+                n = G.UIT.C,
+                config = {
+                    align = 'cm',
+                    button = "reset_config",
+                    h = 0.25,
+                    w = 3,
+                    colour = G.C.BLUE,
+                    padding = 0.125,
+                    outline = 0.5,
+                    outline_colour = G.C.UI.TEXT_LIGHT,
+                },
+                nodes = {
+                    {
+                        n = G.UIT.T,
+                        config = {
+                            colour = G.C.UI.TEXT_LIGHT,
+                            text = localize('reset'),
+                            scale = 0.4,
+                        },
+                    },
+                },
+            },
         },
     };
 end
@@ -93,6 +133,20 @@ end
 -- @param e the save button UI element
 function G.FUNCS.save_config(e)
     MOD.config.bind_map = STATE.bind_map;
+end
+
+--- Saves the current `STATE.bind_map` to persistent storage
+--
+-- @param e the save button UI element
+function G.FUNCS.reset_config(e)
+    STATE.bind_map = BindMap:new();
+    regen_bindbar(e.parent.UIBox:get_UIE_by_ID('multiselect'));
+    regen_bindbar(e.parent.UIBox:get_UIE_by_ID('deselect'));
+    regen_bindbar(e.parent.UIBox:get_UIE_by_ID('sort_suit'));
+    regen_bindbar(e.parent.UIBox:get_UIE_by_ID('sort_val'));
+    regen_bindbar(e.parent.UIBox:get_UIE_by_ID('play'));
+    regen_bindbar(e.parent.UIBox:get_UIE_by_ID('discard'));
+    regen_bindbar(e.parent.UIBox:get_UIE_by_ID('restart'));
 end
 
 --- Handles the button press for the `bind_row` UI element
@@ -106,12 +160,9 @@ function G.FUNCS.bind_button(e)
         STATE.listening = nil;
         STATE.cfg_gui_parent = nil;
     elseif STATE.listening then
-        local old = e.parent.UIBox:get_UIE_by_ID(STATE.listening);
-        old.children[1].config.text = localize(old.config.id) .. ": " .. localize('none');
-        old.config.outline_colour = G.C.RED;
-        old.UIBox:recalculate();
-
+        local old = STATE.listening;
         STATE.listening = e.config.id;
+        regen_bindbar(e.parent.UIBox:get_UIE_by_ID(old));
     else
         STATE.listening = e.config.id;
         STATE.cfg_gui_parent = e.parent;
@@ -124,10 +175,10 @@ function stop_listening()
     if STATE.listening == nil then
         return
     end
-    local e = STATE.cfg_gui_parent.UIBox:get_UIE_by_ID(STATE.listening);
+    local old = STATE.listening;
     STATE.listening = nil;
+    regen_bindbar(STATE.cfg_gui_parent.UIBox:get_UIE_by_ID(old));
     STATE.cfg_gui_parent = nil;
-    regen_bindbar(e);
 end
 
 --- Regenerates the contents of the `bind_row` and updates the UI.
@@ -226,7 +277,17 @@ function SMODS.current_mod.config_tab()
             bind_row("play"),
             bind_row("discard"),
             bind_row("restart"),
-            save_button(),
+            {
+                n = G.UIT.R,
+                config = {
+                    align = "cm",
+                    padding = 0.25,
+                },
+                nodes = {
+                    save_button(),
+                    reset_button(),
+                }
+            }
         },
     };
 end

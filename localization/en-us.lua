@@ -4,7 +4,8 @@ return {
             -- Header text for the keybind menu
             keybinds = 'Keybinds',
             -- Bind instructions
-            bind_text = 'Click a feature, then press or hold a button to bind it to that key.',
+            bind_text = 'Click a feature, then press or hold a button to bind it to that key. \
+            Clicking to bind a hold-only feature will not work.',
 
             -- Feature names (for keybind menu)
             multiselect = 'Multiselect (Hold only)',
@@ -21,8 +22,9 @@ return {
             listening = '[LISTENING]',
             none = '[NONE]',
 
-            -- Save button label
-            save = '[SAVE]'
+            -- Save/Reset button labels
+            save = 'SAVE',
+            reset = 'RESET'
         },
     },
 };
