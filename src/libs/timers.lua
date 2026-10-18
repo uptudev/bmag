@@ -24,8 +24,9 @@ end
 -- Sets the timer to `0` for the given button.
 --
 -- @param button the keycode to begin a timer for
+-- @param meta optional table with input source info for fallback forwarding
 -- @return the @{TimerTable} instance for chain-calling
-function TimerTable:start(button)
+function TimerTable:start(button, meta)
     if
         STATE.bind_map.binding_to_button['multiselect'] and
         STATE.bind_map.binding_to_button['multiselect'].button == button
@@ -37,6 +38,8 @@ function TimerTable:start(button)
         };
     end
     self[button] = 0;
+    if not self._meta then self._meta = {}; end
+    self._meta[button] = meta;
     return self;
 end
 
@@ -58,12 +61,33 @@ function TimerTable:stop(button)
         if self[button] ~= nil then
             STATE.bind_map:bind_click(button, STATE.listening);
             self[button] = nil;
+            if self._meta then self._meta[button] = nil; end
         end
         stop_listening();
         return self;
     end
 
     if self[button] ~= nil then
+        -- Short press: if the button only has a hold binding, forward to the game
+        -- so the button retains its normal function on quick taps.
+        if STATE.bind_map:is_bound(button) == 'hold' then
+            local meta = self._meta and self._meta[button];
+            self[button] = nil;
+            if self._meta then self._meta[button] = nil; end
+            if meta and INPUT_FALLBACKS then
+                if meta.type == 'gamepad' then
+                    INPUT_FALLBACKS.gamepadpressed(meta.joystick, button);
+                    INPUT_FALLBACKS.gamepadreleased(meta.joystick, button);
+                elseif meta.type == 'keyboard' then
+                    INPUT_FALLBACKS.keypressed(button);
+                    INPUT_FALLBACKS.keyreleased(button);
+                elseif meta.type == 'mouse' then
+                    INPUT_FALLBACKS.mousepressed(meta.x, meta.y, meta.button, meta.istouch);
+                    INPUT_FALLBACKS.mousereleased(meta.x, meta.y, meta.button, meta.istouch);
+                end
+            end
+            return self;
+        end
         STATE.bind_map:on_click(button);
     end
     self[button] = nil;
@@ -87,8 +111,10 @@ end
 -- @return the @{TimerTable} instance for chain-calling
 function TimerTable:increment(dt)
     for button, time in pairs(self) do
-        self[button] = time + dt;
-        self:check_overflow(button);
+        if type(time) == 'number' then
+            self[button] = time + dt;
+            self:check_overflow(button);
+        end
     end
     return self;
 end
@@ -101,6 +127,7 @@ end
 function TimerTable:check_overflow(button)
     if self[button] >= 0.2 then
         self[button] = nil;
+        if self._meta then self._meta[button] = nil; end
         if STATE.listening then
             STATE.bind_map:bind_hold(button, STATE.listening);
             stop_listening();
@@ -121,6 +148,7 @@ local old_update = G.CONTROLLER.update;
 function G.CONTROLLER:update(dt)
     old_update(self, dt);
     STATE.timers:increment(dt);
+    if hold_b_tick then hold_b_tick(self); end
     if STATE.multiselecting ~= nil then
         multiselect_hold();
     end

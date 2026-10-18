@@ -3,13 +3,16 @@
 -- This file contains the Love2D input event hooks. All hooks should do is call
 -- methods on the @{TimerTable} instance, which starts the mod's input pipeline.
 
--- old event hooks used for fallback
-local mousepressed_fb = love.mousepressed;
-local mousereleased_fb = love.mousereleased;
-local gamepadpressed_fb = love.gamepadpressed;
-local gamepadreleased_fb = love.gamepadreleased;
-local keypressed_fb = love.keypressed;
-local keyreleased_fb = love.keyreleased;
+-- old event hooks used for fallback; stored globally so timers.lua can forward inputs
+INPUT_FALLBACKS = {
+    mousepressed = love.mousepressed,
+    mousereleased = love.mousereleased,
+    gamepadpressed = love.gamepadpressed,
+    gamepadreleased = love.gamepadreleased,
+    gamepadaxis = love.gamepadaxis,
+    keypressed = love.keypressed,
+    keyreleased = love.keyreleased,
+};
 
 --- Mouse press event hook.
 -- Love2D mouse button press event override.
@@ -26,9 +29,9 @@ function love.mousepressed(x, y, button, istouch)
         and not G.CONTROLLER.locks.frame
         and not G.SETTINGS.PAUSED
     then
-        STATE.timers:start('mouse'..button);
+        STATE.timers:start('mouse'..button, { type = 'mouse', x = x, y = y, button = button, istouch = istouch });
     else
-        mousepressed_fb(x, y, button, istouch);
+        INPUT_FALLBACKS.mousepressed(x, y, button, istouch);
     end
 end
 
@@ -49,7 +52,7 @@ function love.mousereleased(x, y, button, istouch)
     then
         STATE.timers:stop('mouse'..button);
     else
-        mousereleased_fb(x, y, button, istouch);
+        INPUT_FALLBACKS.mousereleased(x, y, button, istouch);
     end
 end
 
@@ -93,15 +96,15 @@ function love.gamepadpressed(joystick, button)
         and not G.CONTROLLER.locks.frame
         and not G.SETTINGS.PAUSED
     then
-        STATE.timers:start(button);
+        STATE.timers:start(button, { type = 'gamepad', joystick = joystick });
     else
         if
-            key == 'start' and
+            button == 'start' and
             STATE.listening
         then
             return;
         end
-        gamepadpressed_fb(joystick, button);
+        INPUT_FALLBACKS.gamepadpressed(joystick, button);
     end
 end
 
@@ -120,13 +123,13 @@ function love.gamepadreleased(joystick, button)
         STATE.timers:stop(button);
     else
         if
-            key == 'start' and
+            button == 'start' and
             STATE.listening
         then
             stop_listening()
             return;
         end
-        gamepadreleased_fb(joystick, button);
+        INPUT_FALLBACKS.gamepadreleased(joystick, button);
     end
 end
 
@@ -142,7 +145,7 @@ function love.keypressed(key)
         and not G.CONTROLLER.locks.frame
         and not G.SETTINGS.PAUSED
     then
-        STATE.timers:start(key);
+        STATE.timers:start(key, { type = 'keyboard' });
     else
         if
             key == 'escape' and
@@ -150,7 +153,7 @@ function love.keypressed(key)
         then
             return;
         end
-        keypressed_fb(key);
+        INPUT_FALLBACKS.keypressed(key);
     end
 end
 
@@ -176,8 +179,39 @@ function love.keyreleased(key)
             stop_listening()
             return;
         end
-        keyreleased_fb(key);
+        INPUT_FALLBACKS.keyreleased(key);
     end
 end
 
+--- Trigger state tracking for menu page navigation
+local trigger_states = {
+    triggerleft = false,
+    triggerright = false,
+};
 
+--- Threshold for trigger activation
+local TRIGGER_THRESHOLD = 0.5;
+
+--- Gamepad axis event hook.
+-- Love2D gamepad axis event override.
+-- Handles trigger inputs for page navigation in menus.
+--
+-- @param joystick the @{love.Joystick} object
+-- @param axis the axis being moved
+-- @param value the axis value (-1 to 1 for sticks, 0 to 1 for triggers)
+function love.gamepadaxis(joystick, axis, value)
+    if axis == 'triggerleft' or axis == 'triggerright' then
+        local pressed = value > TRIGGER_THRESHOLD;
+        local was_pressed = trigger_states[axis];
+        trigger_states[axis] = pressed;
+
+        if pressed and not was_pressed and G.OVERLAY_MENU then
+            local direction = axis == 'triggerleft' and 'l' or 'r';
+            navigate_page(direction);
+        end
+    end
+
+    if INPUT_FALLBACKS.gamepadaxis then
+        INPUT_FALLBACKS.gamepadaxis(joystick, axis, value);
+    end
+end

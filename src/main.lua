@@ -4,11 +4,13 @@
 -- `./input.lua`: The Love2D event hook override functions
 -- `./feats.lua`: The main "feature" functions for the mod
 -- `./timers.lua`: A timer table for checking keypress duration
+-- `./holdb.lua`: Hold B on a gamepad to close all menus
 assert(SMODS.load_file('src/libs/bindmap.lua'))();
 assert(SMODS.load_file('src/libs/config.lua'))();
 assert(SMODS.load_file('src/libs/input.lua'))();
 assert(SMODS.load_file('src/libs/feats.lua'))();
 assert(SMODS.load_file('src/libs/timers.lua'))();
+assert(SMODS.load_file('src/libs/holdb.lua'))();
 
 MOD = SMODS.current_mod;
 local bm = nil;

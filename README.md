@@ -11,6 +11,7 @@ regular *Balatro* player, allowing:
 * Play: play selected cards
 * Discard: discard selected cards
 * Restart: restart, keeping the current run settings
+* Hold B (gamepad): hold the B button for about 0.7 seconds to close all open menus at once
 
 https://github.com/user-attachments/assets/5e02ac8d-0474-43d4-84a5-63057609a308
 

@@ -133,13 +133,16 @@ end
 -- @param e the save button UI element
 function G.FUNCS.save_config(e)
     MOD.config.bind_map = STATE.bind_map;
+    SMODS.save_mod_config(MOD);
 end
 
---- Saves the current `STATE.bind_map` to persistent storage
+--- Resets the current `STATE.bind_map` to defaults and persists to storage
 --
 -- @param e the save button UI element
 function G.FUNCS.reset_config(e)
     STATE.bind_map = BindMap:new();
+    MOD.config.bind_map = STATE.bind_map;
+    SMODS.save_mod_config(MOD);
     regen_bindbar(e.parent.UIBox:get_UIE_by_ID('multiselect'));
     regen_bindbar(e.parent.UIBox:get_UIE_by_ID('deselect'));
     regen_bindbar(e.parent.UIBox:get_UIE_by_ID('sort_suit'));

@@ -1,3 +1,45 @@
+--- Recursively searches a UIE tree for cycle arrow elements.
+-- Looks for elements whose config.ref_value matches the specified direction.
+--
+-- @param node the UIE node to search from
+-- @param direction 'l' for left or 'r' for right
+-- @param results accumulator table for found elements
+-- @return table of matching UIE elements
+local function find_cycle_arrows(node, direction, results)
+    if not node then return results; end
+    results = results or {};
+
+    if node.config and node.config.ref_value == direction then
+        table.insert(results, node);
+    end
+
+    if node.children then
+        for _, child in ipairs(node.children) do
+            find_cycle_arrows(child, direction, results);
+        end
+    end
+
+    return results;
+end
+
+--- Navigates to the next or previous page in the current menu overlay.
+-- Searches the overlay menu for page navigation cycle arrows and clicks the
+-- last one found (page navigation is typically at the bottom of the menu).
+--
+-- @param direction 'l' for left/previous or 'r' for right/next
+function navigate_page(direction)
+    if not G.OVERLAY_MENU or not G.OVERLAY_MENU.UIRoot then return; end
+
+    local arrows = find_cycle_arrows(G.OVERLAY_MENU.UIRoot, direction);
+
+    if #arrows == 0 then return; end
+
+    local arrow = arrows[#arrows];
+    if arrow.click then
+        arrow:click();
+    end
+end
+
 --- Update function for multiselect
 -- Only runs when `STATE.multiselecting` is not nil.
 function multiselect_hold()
